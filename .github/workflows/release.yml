@@ -1,0 +1,40 @@
+name: CI
+concurrency: release
+
+on:
+  release:
+    published
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: echo Hello, World ${ github.ref } !
+
+  deploy-quality:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: qa
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: echo Hello QA!
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-quality
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: echo Hello Production!
