@@ -3,7 +3,7 @@ concurrency: release
 
 on:
   release:
-    published
+    types: [published]
 
   workflow_dispatch:
 
