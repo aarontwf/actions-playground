@@ -6,13 +6,13 @@ on:
 jobs:
   create-label:
     runs-on: ubuntu-latest
-    if: github.event_name == 'create' && github.event.ref_type == 'branch'
+    if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' }}
 
     steps:
       - run: |
-        echo ${github.event.reference.object}
-        curl \
-          -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          ${github.event.repository.labels_url} \
-          -d '{"name":"React ${github.event.reference.ref}"}'
+          echo ${{ github.event.reference.object }}
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            ${{ github.event.repository.labels_url }} \
+            -d '{"name":"React ${{ github.event.reference.ref }}"}'
