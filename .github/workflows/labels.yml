@@ -13,10 +13,9 @@ jobs:
       - uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository }}/labels
-          body: ${{ fromJSON(env.REQUEST_BODY) }}
+          body: ${{ toJSON('{"name":"React ${{ github.event.ref }}"}') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REQUEST_BODY: '{"name":"React ${{ github.event.ref }}"}'
 
   delete-label:
     name: Delete branch label
