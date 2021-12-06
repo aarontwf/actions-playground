@@ -1,7 +1,7 @@
 name: Branch Labels
 
 on:
-  create
+  [create, delete]
 
 jobs:
   create-label:
@@ -9,8 +9,22 @@ jobs:
     if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' }}
 
     steps:
-      - run: |
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            ${{ github.event.repository.url }}/labels \
-            -d '{"name":"React ${{ github.event.ref }}"}'
+      - uses: octokit/request-action@v2.x
+        with:
+          name: Create branch label
+          route: POST /repos/${{ github.repository }}/labels
+          body: '{"name":"React ${{ github.event.ref }}"}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  delete-label:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }}
+
+    steps:
+      - uses: octokit/request-action@v2.x
+        with:
+          name: Delete branch label
+          route: DELETE /repos/${{ github.repository }}/labels/React ${{ github.event.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
