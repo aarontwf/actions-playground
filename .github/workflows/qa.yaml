@@ -24,6 +24,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      
+      - name: Add deploying label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: Deploying React...
+          number: 4
 
       - name: Deploy
         run: echo Deploying ${{ github.ref }} to ${{ github.event.inputs.environment }}!
+      
+      - name: Remove deploting label from issue
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: Deploying React...
+          number: 4
+      
+      - name: Add deployed branch label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: React ${{ steps.extract_branch.outputs.branch }}
+          number: 4
