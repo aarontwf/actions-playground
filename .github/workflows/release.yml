@@ -17,24 +17,29 @@ jobs:
       - name: Build
         run: echo Hello, World ${{ github.ref }}!
 
-  deploy-quality:
+  deploy-staging:
     runs-on: ubuntu-latest
     needs: build
-    environment: qa
+    strategy:
+      matrix:
+        environment: [Staging 01, Staging 02]
+    environment: ${{ matrix.environment }}
+    name: Deploy to ${{ matrix.environment }}
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
-        run: echo Hello QA!
+      - name: Deploy
+        run: echo Hello ${{ matrix.environment }}!
 
   deploy-production:
     runs-on: ubuntu-latest
-    needs: deploy-quality
+    needs: deploy-staging
     environment: production
+    name: Deploy to Production
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
+      - name: Deploy
         run: echo Hello Production!
