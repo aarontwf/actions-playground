@@ -10,12 +10,14 @@ jobs:
     if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' }}
 
     steps:
-      - uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/labels
-          body: "'\\'{\"name\":\"React ${{ github.event.ref }}\"}\\''"
+      - uses: aarontwf/create-delete-label-action@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: React ${{ github.event.ref }}
+          description: ${{ github.event.ref }} branch
+          color: '#d73a4a'
+          action: create
 
   delete-label:
     name: Delete branch label
@@ -23,8 +25,10 @@ jobs:
     if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }}
 
     steps:
-      - uses: octokit/request-action@v2.x
-        with:
-          route: DELETE /repos/${{ github.repository }}/labels/React ${{ github.event.ref }}
+
+      - uses: aarontwf/create-delete-label-action@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: React ${{ github.event.ref }}
+          action: delete
