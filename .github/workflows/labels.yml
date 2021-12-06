@@ -5,26 +5,26 @@ on:
 
 jobs:
   create-label:
+    name: Create branch label
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'create' && github.event.ref_type == 'branch' }}
 
     steps:
       - uses: octokit/request-action@v2.x
         with:
-          name: Create branch label
           route: POST /repos/${{ github.repository }}/labels
           body: '{"name":"React ${{ github.event.ref }}"}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   delete-label:
+    name: Delete branch label
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }}
 
     steps:
       - uses: octokit/request-action@v2.x
         with:
-          name: Delete branch label
           route: DELETE /repos/${{ github.repository }}/labels/React ${{ github.event.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
