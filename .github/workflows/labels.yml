@@ -13,7 +13,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository }}/labels
-          body: "'{\"name\":\"React ${{ github.event.ref }}\"}'"
+          body: "''{\"name\":\"React ${{ github.event.ref }}\"}''"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
