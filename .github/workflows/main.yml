@@ -43,7 +43,7 @@ jobs:
         with:
           query: |
             query findEnvironments {
-              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title QA label:\"React ${{ steps.extract_branch.outputs.branch }}\"") {
+              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title QA label:\"React ${{ steps.extract_branch.outputs.branch }}\"", first: 50) {
                 nodes {
                   ... on Issue {
                     title
