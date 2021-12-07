@@ -34,15 +34,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - id: environment_issue
-        run: echo ::set-output name=issue_number::'${{ fromJson(steps.find_issue.outputs.data).search.nodes[0].number }}'
+        run: echo ::set-output name=number::'${{ fromJson(steps.find_issue.outputs.data).search.nodes[0].number }}'
       
-      - run: echo ${{ steps.environment_issue.outputs.issue_number }}
+      - run: echo Todo, remove existing react labels
       
-      - name: Add deploying label
+      - name: Add deploying label to issue
         if: contains(fromJson('["waiting", "in_progress"]'), github.event.deployment_status.state)
-        run: Todo
-      
-      - name: Add success label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.outputs.number }}
+
+      - name: Remove deploying label from issue
+        if: contains(fromJson('["success", "failed"]'), github.event.deployment_status.state)
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.outputs.number }}
+
+      - name: Add deployed branch label to issue
         if: github.event.deployment_status.state == 'success'
-        run: Todo
-        
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: React ${{ github.event.deployment.ref }}
+          number: ${{ steps.environment_issue.outputs.number }}
