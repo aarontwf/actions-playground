@@ -63,16 +63,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: qa-auto-updates
     steps:
-      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments) }}
-      - run: echo ${{ needs.qa-auto-updates.outputs.environments }}
+      - run: echo '${{ needs.qa-auto-updates.outputs.environments }}'
 
-#   deploy-qa:
-#     name: QA
-#     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-#     needs: qa-auto-updates
-#     if: github.event_name == 'push'
-#     with:
-#       environments: ${{ needs.qa-auto-updates.outputs.environments }}
+  deploy-qa:
+    name: QA
+    uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
+    needs: qa-auto-updates
+    if: github.event_name == 'push'
+    with:
+      environments: ${{ needs.qa-auto-updates.outputs.environments }}
   
   deploy-staging:
     name: Staging
