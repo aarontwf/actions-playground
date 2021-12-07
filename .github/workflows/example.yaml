@@ -32,13 +32,46 @@ jobs:
       - name: Build
         run: echo Building ${{ github.ref }}!
 
+  qa-auto-updates:
+    name: Determine required updates
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      environments: ${{ toJson(steps.get-update-environments.outputs.environments) }}
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - uses: octokit/graphql-action@v2.x
+        id: get-update-environments
+        with:
+          query: |
+            query release($owner:String!,$repo:String!) {
+              repository(owner:$owner,name:$repo) {
+                label(name: "React ${{ steps.extract_branch.outputs.branch }}") {
+                  issues(first: 50) {
+                    nodes {
+                      title
+                    }
+                  }
+                }
+              }
+            }
+          owner: ${{ github.event.repository.owner.name }}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo ${{ steps.get_update_environments.outputs.data.repositories.label.issues.nodes.*.title }}
+      - run: echo :'::set-output name=environments::${{ steps.get_update_environments.outputs.data.repositories.label.issues.nodes.*.title }}'
+
   deploy-manual:
     name: QA Manual
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: build
+    needs: qa-auto-updates
     if: github.event_name == 'workflow_dispatch'
     with:
-      environments: ${{ format('["{0}"]', github.event.inputs.environment) }}
+      environments: ${{ needs.qa-auto-updates.outputs.environments }}
   
   deploy-staging:
     name: Staging
