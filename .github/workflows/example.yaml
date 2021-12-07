@@ -58,11 +58,11 @@ jobs:
                 }
               }
             }
-          owner: ${{ github.event.repository.owner.name }}
+          owner: ${{ github.event.repository.owner.login }}
           repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo ${{ steps.get_update_environments.outputs.data.repositories.label.issues.nodes.*.title }}
+      - run: echo ${{ toJson(steps.get_update_environments.outputs.data.repositories.label.issues.nodes.*.title) }}
       - run: echo :'::set-output name=environments::${{ steps.get_update_environments.outputs.data.repositories.label.issues.nodes.*.title }}'
 
   deploy-manual:
