@@ -58,7 +58,7 @@ jobs:
     name: Update
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: qa-auto-updates
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && needs.qa-auto-updates.outputs.environments.length > 0
     with:
       environments: ${{ needs.qa-auto-updates.outputs.environments }}
   
