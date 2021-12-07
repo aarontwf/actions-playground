@@ -42,7 +42,9 @@ jobs:
       
       - name: Add deploying label
         if: contains(['waiting', 'in_progress'], github.event.deployment_status.state)
+        run: Todo
       
       - name: Add success label
         if: github.event.deployment_status.state == 'success'
+        run: Todo
         
