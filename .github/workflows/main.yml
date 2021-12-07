@@ -57,7 +57,7 @@ jobs:
           repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo ::set-output name=environments::'${{ fromJson(steps.get-update-environments.outputs.data).repository.label.issues.nodes.*.title }}'
+      - run: echo ::set-output name=environments::'${{ fromJson(steps.get-update-environments.outputs.data).repository.label.issues.nodes }}'
 
   log:
     name: Log
@@ -66,6 +66,9 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - run: echo ${{ needs.qa-auto-updates.outputs.environments }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments) }}
+      - run: echo ${{ needs.qa-auto-updates.outputs.environments.*.title }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.*.title) }}
 
 #   deploy-qa:
 #     name: QA
