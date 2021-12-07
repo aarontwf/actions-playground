@@ -46,7 +46,7 @@ jobs:
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
-      environments: ${{ toJson([Staging 01, Staging 02]) }}
+      environments: ${{ toJson(['Staging 01', 'Staging 02']) }}
 
   deploy-production:
     name: Deploy to Production
@@ -54,4 +54,4 @@ jobs:
     needs: deploy-staging
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
-      environments: ${{ toJson([Production]) }}
+      environments: ${{ toJson(['Production']) }}
