@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     outputs:
-      environments: ${{ toJson(fromJson(steps.get-update-environments.outputs.data).repository.label.issues.nodes.*.title) }}
+      environments: ${{ toJson(fromJson(steps.get-update-environments.outputs.data).search.nodes.*.title) }}
     steps:
       - name: Extract branch name
         shell: bash
@@ -42,19 +42,15 @@ jobs:
         id: get-update-environments
         with:
           query: |
-            query release($owner:String!,$repo:String!) {
-              repository(owner:$owner,name:$repo) {
-                label(name: "React ${{ steps.extract_branch.outputs.branch }}") {
-                  issues(first: 50) {
-                    nodes {
-                      title
-                    }
+            query findEnvironments {
+              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title QA label:\"React ${{ steps.extract_branch.outputs.branch }}\"") {
+                nodes {
+                  ... on Issue {
+                    title
                   }
                 }
               }
             }
-          owner: ${{ github.event.repository.owner.login }}
-          repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
