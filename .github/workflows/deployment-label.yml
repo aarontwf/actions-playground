@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency: deploy-label-${{ github.event.deployment.environment }}
 
     steps:
       - name: Run a multi-line script
@@ -14,3 +15,34 @@ jobs:
           echo ${{ github.event.deployment_status.state }}
           echo ${{ github.event.deployment.environment }}
           echo ${{ github.event.deployment.ref }}
+      
+      - name: Get issue number
+        id: find_issue
+        uses: octokit/graphql-action@v2.x
+        with:
+          query: |
+            query findIssue($repo:String!,$title:String!) {
+              search(type: ISSUE, query: "repo:$repo in:title $title", first: 1) {
+                nodes {
+                  ... on Issue {
+                    number
+                  }
+                }
+              }
+            }
+          title: ${{ github.event.deployment.environment }}
+          repo: ${{ github.event.repository.full_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: environment_issue
+        run: echo ::set-output name=issue_number::'${{ fromJson(steps.find_issue.outputs.data).search.nodes[0].number }}'
+      
+      - run: echo ${{ steps.environment_issue.outputs.issue_number }}
+      
+      - name: Add deploying label
+        if: contains(['waiting', 'in_progress'], github.event.deployment_status.state)
+      
+      - name: Add success label
+        if: github.event.deployment_status.state == 'success'
+        
