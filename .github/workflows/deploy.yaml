@@ -23,31 +23,46 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       
-#       - name: Find environment issue
-#         shell: bash
-#         run: echo "##[set-output name=number;]$(echo 4)"
-#         id: environment_issue
+      - name: Get issue number
+        id: find_issue
+        uses: octokit/graphql-action@v2.x
+        with:
+          query: |
+            query findIssue {
+              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title ${{ matrix.environment }}", first: 1) {
+                nodes {
+                  ... on Issue {
+                    number
+                  }
+                }
+              }
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: environment_issue
+        run: echo ::set-output name=number::'${{ fromJson(steps.find_issue.outputs.data).search.nodes[0].number }}'
       
-#       - name: Removing existing label
-#         run: echo Todo
+      - name: Removing existing label
+        run: echo 'Todo'
       
-#       - name: Add deploying label to issue
-#         uses: actions-ecosystem/action-add-labels@v1
-#         with:
-#           labels: Deploying React...
-#           number: ${{ steps.environment_issue.outputs.number }}
+      - name: Add deploying label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.outputs.number }}
 
       - name: Deploy to ${{ matrix.environment }}
         run: echo Deploying ${{ github.ref }} to ${{ matrix.environment }}!
       
-#       - name: Remove deploying label from issue
-#         uses: actions-ecosystem/action-remove-labels@v1
-#         with:
-#           labels: Deploying React...
-#           number: ${{ steps.environment_issue.outputs.number }}
+      - name: Remove deploying label from issue
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.outputs.number }}
       
-#       - name: Add deployed branch label to issue
-#         uses: actions-ecosystem/action-add-labels@v1
-#         with:
-#           labels: React ${{ steps.extract_branch.outputs.branch }}
-#           number: ${{ steps.environment_issue.outputs.number }}
+      - name: Add deployed branch label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: React ${{ steps.extract_branch.outputs.branch }}
+          number: ${{ steps.environment_issue.outputs.number }}
