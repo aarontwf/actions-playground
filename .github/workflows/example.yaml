@@ -38,29 +38,20 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch'
     with:
-      environment: ${{ github.event.inputs.environment }}
-
+      environments: ${{ toJson([${{ github.event.inputs.environment }}]) }}
   
-  deploy-staging-01:
-    name: Deploy to Staging 01
+  deploy-staging:
+    name: Deploy to Staging
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
-      environment: Staging 01
-
-  deploy-staging-02:
-    name: Deploy to Staging 02
-    uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: check
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    with:
-      environment: Staging 02
+      environments: ${{ toJson([Staging 01, Staging 02]) }}
 
   deploy-production:
     name: Deploy to Production
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: [deploy-staging-01, deploy-staging-02]
+    needs: deploy-staging
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
-      environment: Production
+      environments: ${{ toJson([Production]) }}
