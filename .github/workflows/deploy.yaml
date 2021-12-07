@@ -31,7 +31,7 @@ jobs:
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: Deploying React...
-          number: ${{ steps.environment_issue.number }}
+          number: ${{ steps.environment_issue.outputs.number }}
 
       - name: Deploy to ${{ github.event.inputs.environment }}
         run: echo Deploying ${{ github.ref }} to ${{ inputs.environment }}!
@@ -40,10 +40,10 @@ jobs:
         uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: Deploying React...
-          number: ${{ steps.environment_issue.number }}
+          number: ${{ steps.environment_issue.outputs.number }}
       
       - name: Add deployed branch label to issue
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: React ${{ steps.extract_branch.outputs.branch }}
-          number: ${{ steps.environment_issue.number }}
+          number: ${{ steps.environment_issue.outputs.number }}
