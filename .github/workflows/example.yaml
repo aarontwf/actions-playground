@@ -38,7 +38,7 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch'
     with:
-      environments: ${{ toJson([${{ github.event.inputs.environment }}]) }}
+      environments: ${{ '["' + github.event.inputs.environment + '"]' }}
   
   deploy-staging:
     name: Deploy to Staging
