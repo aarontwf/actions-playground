@@ -64,11 +64,8 @@ jobs:
     needs: qa-auto-updates
     steps:
       - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments) }}
-      - run: echo ${{ toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository) }}
-      - run: echo ${{ toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label) }}
-      - run: echo ${{ toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues) }}
-      - run: echo ${{ toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes) }}
-      - run: echo ${{ toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes.*.title) }}
+      - run: echo ${{ toJson(toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes)) }}
+      - run: echo ${{ toJson(toJson(fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes.*.title)) }}
 
 #   deploy-qa:
 #     name: QA
