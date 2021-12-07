@@ -1,0 +1,107 @@
+name: Build and Deploy
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Deploy to
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Lint and test
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Lint
+        run: echo Linting ${{ github.ref }}
+        
+      - name: Test
+        run: echo Testing ${{ github.ref }}
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: echo Building ${{ github.ref }}!
+
+  deploy-manual:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Deploy to ${{ github.event.inputs.environment }}
+    if: github.event_name == 'workflow_dispatch'
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      
+      - name: Add deploying label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: Deploying React...
+          number: 4
+
+      - name: Deploy
+        run: echo Deploying ${{ github.ref }} to ${{ github.event.inputs.environment }}!
+      
+      - name: Remove deploting label from issue
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: Deploying React...
+          number: 4
+      
+      - name: Add deployed branch label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: React ${{ steps.extract_branch.outputs.branch }}
+          number: 4
+  
+  deploy-staging-01:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: Staging 01
+    name: Deploy to Staging 01
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy
+        run: echo Hello Staging 01!
+
+  deploy-staging-02:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: Staging 02
+    name: Deploy to Staging 02
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy
+        run: echo Hello Staging 02!
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [deploy-staging-01, deploy-staging-02]
+    environment: production
+    name: Deploy to Production
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy
+        run: echo Hello Production!
