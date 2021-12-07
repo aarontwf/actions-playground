@@ -41,7 +41,7 @@ jobs:
       - run: echo ${{ steps.environment_issue.outputs.issue_number }}
       
       - name: Add deploying label
-        if: contains(['waiting', 'in_progress'], github.event.deployment_status.state)
+        if: contains(fromJson('["waiting", "in_progress"]'), github.event.deployment_status.state)
         run: Todo
       
       - name: Add success label
