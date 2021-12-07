@@ -63,13 +63,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: qa-auto-updates
     steps:
-      - run: echo ${{ needs.qa-auto-updates.outputs.environments }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments) }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments).repository }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments).repository.label }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes }}
-      - run: echo ${{ fromJson(needs.qa-auto-updates.outputs.environments).repository.label.issues.nodes.*.title }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments) }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.repository) }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.repository.label) }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.repository.label.issues) }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.repository.label.issues.nodes) }}
+      - run: echo ${{ toJson(needs.qa-auto-updates.outputs.environments.repository.label.issues.nodes.*.title) }}
 
 #   deploy-qa:
 #     name: QA
