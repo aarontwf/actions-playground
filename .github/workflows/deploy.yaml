@@ -1,0 +1,48 @@
+on: 
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+ 
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      
+      - name: Find environment issue
+        shell: bash
+        run: echo "##[set-output name=number;]$(echo 4)"
+        id: environment_issue
+      
+      - name: Removing existing label
+        run: echo Todo
+      
+      - name: Add deploying label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.number }}
+
+      - name: Deploy to ${{ github.event.inputs.environment }}
+        run: echo Deploying ${{ github.ref }} to ${{ inputs.environment }}!
+      
+      - name: Remove deploying label from issue
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: Deploying React...
+          number: ${{ steps.environment_issue.number }}
+      
+      - name: Add deployed branch label to issue
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: React ${{ steps.extract_branch.outputs.branch }}
+          number: ${{ steps.environment_issue.number }}
