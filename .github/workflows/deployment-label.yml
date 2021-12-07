@@ -21,7 +21,7 @@ jobs:
         uses: octokit/graphql-action@v2.x
         with:
           query: |
-            query findIssue() {
+            query findIssue {
               search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title ${{ github.event.deployment.environment }}", first: 1) {
                 nodes {
                   ... on Issue {
