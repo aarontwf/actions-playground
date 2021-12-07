@@ -1,0 +1,16 @@
+name: Label Deployments
+
+on:
+  deployment_status:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run a multi-line script
+        run: |
+          echo ${{ github.event.action }}
+          echo ${{ github.event.deployment_status.state }}
+          echo ${{ github.event.deployment.environment }}
+          echo ${{ github.event.deployment.ref }}
