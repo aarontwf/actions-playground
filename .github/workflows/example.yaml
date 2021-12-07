@@ -35,7 +35,7 @@ jobs:
   deploy-manual:
     runs-on: ubuntu-latest
     needs: build
-    name: Deploy to ${{ github.event.inputs.environment }}
+    name: Deploy to QA
     if: github.event_name == 'workflow_dispatch'
     environment: ${{ github.event.inputs.environment }}
 
@@ -53,7 +53,7 @@ jobs:
           labels: Deploying React...
           number: 4
 
-      - name: Deploy
+      - name: Deploy to ${{ github.event.inputs.environment }}
         run: echo Deploying ${{ github.ref }} to ${{ github.event.inputs.environment }}!
       
       - name: Remove deploting label from issue
@@ -70,7 +70,7 @@ jobs:
   
   deploy-staging-01:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [check, build]
     environment: Staging 01
     name: Deploy to Staging 01
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -83,7 +83,7 @@ jobs:
 
   deploy-staging-02:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [check, build]
     environment: Staging 02
     name: Deploy to Staging 02
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
