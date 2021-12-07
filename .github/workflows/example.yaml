@@ -62,8 +62,8 @@ jobs:
           repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo ${{ toJson(steps.get-update-environments.outputs.data) }}
-      - run: echo :'::set-output name=environments::${{ steps.get-update-environments.outputs.data.repositories.label.issues.nodes.*.title }}'
+      - run: echo ${{ toJson(steps.get-update-environments.outputs.data.repository.label.issues.nodes.*.title) }}
+      - run: echo :'::set-output name=environments::${{ steps.get-update-environments.outputs.data.repository.label.issues.nodes.*.title }}'
 
   deploy-manual:
     name: QA Manual
