@@ -7,12 +7,13 @@ on:
  
 jobs:
   deploy:
-    name: Deploy to ${{ matrix.environment }}
+    name: ${{ matrix.environment }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         environment: ${{fromJSON(inputs.environments)}}
     environment: ${{ matrix.environment }}
+    concurrency: deploy-${{ matrix.environment }}
     
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +37,7 @@ jobs:
 #           labels: Deploying React...
 #           number: ${{ steps.environment_issue.outputs.number }}
 
-      - name: Deploy to ${{ github.event.inputs.environment }}
+      - name: Deploy to ${{ matrix.environment }}
         run: echo Deploying ${{ github.ref }} to ${{ matrix.environment }}!
       
 #       - name: Remove deploying label from issue
