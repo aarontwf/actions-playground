@@ -44,7 +44,7 @@ jobs:
   deploy-staging:
     name: Staging
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: check
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
       environments: '["Staging 01", "Staging 02"]'
