@@ -62,7 +62,6 @@ jobs:
           repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo ${{ toJson(fromJson(steps.get-update-environments.outputs.data).repository.label.issues.nodes.*.title) }}
       - run: echo :'::set-output name=environments::${{ fromJson(steps.get-update-environments.outputs.data).repository.label.issues.nodes.*.title }}'
 
   deploy-manual:
