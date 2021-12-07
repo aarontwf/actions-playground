@@ -42,6 +42,7 @@ jobs:
 
   
   deploy-staging-01:
+    name: Deploy to Staging 01
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -49,6 +50,7 @@ jobs:
       environment: Staging 01
 
   deploy-staging-02:
+    name: Deploy to Staging 02
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -56,6 +58,7 @@ jobs:
       environment: Staging 02
 
   deploy-production:
+    name: Deploy to Production
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: [deploy-staging-01, deploy-staging-02]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
