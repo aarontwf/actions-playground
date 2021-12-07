@@ -1,0 +1,24 @@
+name: Deploy to Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Deploy to
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: echo Building ${{ github.ref }}!
+
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    needs: build
+    environment: ${{ github.event.inputs.environment }}
+    run: echo Deploying ${{ github.ref }} to ${{ github.event.inputs.environment }}!
