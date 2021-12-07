@@ -1,5 +1,4 @@
 name: Deploy to Environment
-concurrency: deploy-${{ github.event.inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -17,10 +16,8 @@ jobs:
       - run: echo Building ${{ github.ref }}!
 
   deploy:
-    name: Deploy to ${{ github.event.inputs.environment }}
-    runs-on: ubuntu-latest
+    name: Deploy
+    uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
     needs: build
-    environment: ${{ github.event.inputs.environment }}
-    
-    steps:
-      - run: echo Deploying ${{ github.ref }} to ${{ github.event.inputs.environment }}!
+    with:
+      environments: ${{ format('["{0}"]', github.event.inputs.environment) }}
