@@ -19,7 +19,7 @@ jobs:
           echo "Pre-release: ${{ github.event.release.prerelease }}"
       
       - name: Tag staging
-        if: github.event.action == 'prereleased'\
+        if: github.event.action == 'prereleased'
         uses: richardsimko/update-tag@v1
         with:
           tag_name: staging
