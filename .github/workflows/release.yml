@@ -2,11 +2,11 @@ name: Release
 
 on:
   release:
-    types: [prereleased, released]
+    types: [prereleased]
 
 jobs:
-  log:
-    name: Log
+  deploy-staging:
+    name: Deploy to Staging
     runs-on: ubuntu-latest
     if: github.event.release.draft == false
 
@@ -19,15 +19,23 @@ jobs:
           echo "Pre-release: ${{ github.event.release.prerelease }}"
       
       - name: Tag staging
-        if: github.event.action == 'prereleased'
         uses: richardsimko/update-tag@v1
         with:
           tag_name: staging
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.event.release.draft == false
+    needs: deploy-staging
+    environment: Production
+    
+    steps:
+      - run: echo Deploying ${{ github.event.release.tag_name }} to Production!
+      
       - name: Tag production
-        if: github.event.action == 'released'
         uses: richardsimko/update-tag@v1
         with:
           tag_name: production
