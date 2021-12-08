@@ -1,3 +1,3 @@
 # Actions Playground
 
-Example v2
+CI/CD Examples

@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: echo Building ${{ github.ref }}!
 
-  qa-auto-updates:
+  auto-updates:
     name: Determine required updates
     runs-on: ubuntu-latest
     needs: build
@@ -43,7 +43,7 @@ jobs:
         with:
           query: |
             query findEnvironments {
-              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} in:title QA label:\"React ${{ steps.extract_branch.outputs.branch }}\"", first: 50) {
+              search(type: ISSUE, query: "repo:${{ github.event.repository.full_name }} NOT in:title Production label:\"React ${{ steps.extract_branch.outputs.branch }}\"", first: 50) {
                 nodes {
                   ... on Issue {
                     title
@@ -54,28 +54,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy-qa:
+  update:
     name: Update
     uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: qa-auto-updates
-    if: github.event_name == 'push' && fromJson(needs.qa-auto-updates.outputs.environments)[0] != null
+    needs: auto-updates
+    if: github.event_name == 'push' && fromJson(needs.auto-updates.outputs.environments)[0] != null
     with:
-      environments: ${{ needs.qa-auto-updates.outputs.environments }}
-  
-  deploy-staging:
-    name: Deploy
-    uses: aarontwf/actions-playground/.github/workflows/deploy.yaml@main
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    with:
-      environments: '["Staging 01", "Staging 02"]'
-
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: Production
-    
-    steps:
-      - run: echo Deploying ${{ github.ref }} to Production!
+      environments: ${{ needs.auto-updates.outputs.environments }}

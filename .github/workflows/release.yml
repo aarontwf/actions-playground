@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  release:
+    types: [prereleased]
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.event.release.draft == false
+
+    steps:
+      - name: Log details
+        run: |
+          echo "Action: ${{ github.event.action }}"
+          echo "Name: ${{ github.event.release.name }}"
+          echo "Tag Name: ${{ github.event.release.tag_name }}"
+          echo "Pre-release: ${{ github.event.release.prerelease }}"
+      
+      - name: Tag staging
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: staging
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.event.release.draft == false
+    needs: deploy-staging
+    environment: Production
+    
+    steps:
+      - run: echo Deploying ${{ github.event.release.tag_name }} to Production!
+      
+      - name: Mark as released
+        uses: tubone24/update_release@v1.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          prerelease: false
+      
+      - name: Tag production
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: production
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
