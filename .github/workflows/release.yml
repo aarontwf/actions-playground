@@ -8,7 +8,7 @@ jobs:
   log:
     name: Log
     runs-on: ubuntu-latest
-    if: !github.event.release.draft
+    if: github.event.release.draft == false
 
     steps:
       - name: Log details
