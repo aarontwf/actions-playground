@@ -2,11 +2,13 @@ name: Release
 
 on:
   release:
+    types: [prereleased, released]
 
 jobs:
   log:
     name: Log
     runs-on: ubuntu-latest
+    if: !github.event.release.draft
 
     steps:
       - name: Log details
@@ -15,3 +17,19 @@ jobs:
           echo "Name: ${{ github.event.release.name }}"
           echo "Tag Name: ${{ github.event.release.tag_name }}"
           echo "Pre-release: ${{ github.event.release.prerelease }}"
+      
+      - name: Tag staging
+        if: github.event.action == 'prereleased'\
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: staging
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Tag production
+        if: github.event.action == 'released'
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: production
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
