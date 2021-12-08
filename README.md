@@ -1,3 +1,3 @@
 # Actions Playground
 
-CI/CD Examples hot fix
+Some CI/CD Examples (hot fix)
