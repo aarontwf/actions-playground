@@ -24,6 +24,6 @@ jobs:
           password: ${{ secrets.JIRA_PASSWORD }}
           serverAddress: support.cartoncloud.com
           projectId: 10204
-          releaseName: ${{ github.event.inputs.release_name }}
+          name: ${{ github.event.inputs.release_name }}
           isReleased: ${{ github.event.inputs.is_released == 'true' }}
           description: Test JIRA GitHub Action
