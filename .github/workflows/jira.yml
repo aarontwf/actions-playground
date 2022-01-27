@@ -26,3 +26,4 @@ jobs:
           projectId: 10204
           releaseName: ${{ github.event.inputs.release_name }}
           isReleased: ${{ github.event.inputs.is_released == 'true' }}
+          description: Test JIRA GitHub Action
